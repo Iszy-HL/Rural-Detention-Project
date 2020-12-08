@@ -3,4 +3,4 @@
 
 
 
-Note: Only include Illinois shapefile file in this repository, as the full 2010 US County shapefile was too large to include 
+Note: Only included Illinois shapefile  in this repository, as the full 2010 US County shapefile was too large to include on GitHub
