@@ -1,6 +1,6 @@
-## Rural Detention Project
+## Rural Detention: Are Immigration and Customs Enforcement Facilities Disproportionately Located in Rural Areas?
 
- Completed for GIS I (Fall 2019) at University of Chicago
+Completed for GIS I (Fall 2019) at University of Chicago
 
 
 
