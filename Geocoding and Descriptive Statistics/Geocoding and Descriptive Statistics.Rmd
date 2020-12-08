@@ -1,0 +1,110 @@
+---
+title: "Appendix I - Geocoding and Descriptive Statistics"
+author: "Iszy Hirschtritt Licht"
+date: "12/11/2019"
+output: pdf_document
+---
+
+#Libraries
+
+```{r Libraries, message=FALSE}
+
+library(tidyverse)
+library(dplyr)
+library(tigris)
+library(stargazer)
+
+```
+
+#Geocoding ICE Detention Centers
+```{r Geolocate ICE Detention Centers, eval = FALSE}  
+
+#Load CSV with Lat/Long of ICE Detention Centers
+geolatlon <-  read.csv("geolatlon.csv")
+
+#Use Lat/Long to find Census Codes
+geolatlon$census_code <- NA 
+
+for(i in 1:nrow(geolatlon)){   
+geolatlon$census_code[i] <-  call_geolocator_latlon(geolatlon$lat[i], geolatlon$long[i]) } 
+
+#Update Geolatlon CSV File
+write.csv(geolatlon, '/Users/Iszy/Documents/Harris School of Public Policy/Year 2/
+Fall 2019/GIS I/Final Project/QGIS Mapping Data/NHGIS Data – Final/ANOVA Data/geolatlon_2.csv',
+row.names = FALSE)
+
+# I then used this geocoded data for the lattitude/longitude and identified census
+# tracts with ICE detention centers
+```
+
+
+#Load Data for Analysis
+```{r Load Data for Analysis}
+
+#Load Census Tract Data
+tract_data <- read.csv("tract_data.csv")
+
+#Confirm that 1 or 0 Identifier for All Census Tracts
+tract_data <-  tract_data %>%
+  mutate(ICE_center = if_else(tract_data$Contains_ICE ==1, 1, 0))
+
+tract_data$ICE_center <- as.factor(tract_data$ICE_center)
+```
+
+\pagebreak
+
+#Descriptive Statistics: All Census Tracts
+```{r Descriptive Statistics, message = FALSE, results='asis'}
+
+#Create New Dataframes for Tracts with and without ICE facilities
+tract_data_ICE <- tract_data %>%
+  filter(ICE_center == 1)
+
+tract_data_no <-tract_data %>%
+  filter(ICE_center ==0)
+
+#Calculate Descriptive Statistics
+stargazer(subset(tract_data_ICE[c("Percent_Foreign_Born", "Percent_Speak_Spanish",
+          "Percent_Latino")]),type = "latex", median = TRUE, title = 
+          "Descriptive Statistics: Census Tracts with ICE Detention Facilities", 
+          style = "aer", covariate.labels = 
+            c("Percent Foreign Born", "Percent Spanish Speaker", 
+              "Percent Hispanic/Latino"))
+
+stargazer(subset(tract_data_no[c("Percent_Foreign_Born", "Percent_Speak_Spanish",
+          "Percent_Latino")]), type = "latex", median = TRUE, title = 
+          "Descriptive Statistics: Census Tracts without ICE Detention Facilities",
+          style = "aer", covariate.labels = c("Percent Foreign Born", 
+          "Percent Spanish Speaker", "Percent Hispanic/Latino"))
+          
+```
+
+\pagebreak
+
+#Descriptive Statistics: Illinois Census Tracts
+```{r Illinois Descriptive Statistics, message = FALSE, results='asis'}
+
+tract_data_IL <- tract_data %>%
+  filter(STATEA == 17)
+
+tract_data_IL_ICE <- tract_data_IL %>%
+  filter(ICE_center == 1)
+
+tract_data_IL_no <-tract_data_IL %>%
+  filter(ICE_center ==0)
+
+stargazer(subset(tract_data_IL_ICE[c("Percent_Foreign_Born", "Percent_Speak_Spanish",
+          "Percent_Latino")]),type = "latex", median = TRUE, title = 
+          "Descriptive Statistics: Illinois Census Tracts with ICE Detention Facilities", 
+          style = "aer", covariate.labels = 
+            c("Percent Foreign Born", "Percent Spanish Speaker", 
+              "Percent Hispanic/Latino"))
+
+stargazer(subset(tract_data_IL_no[c("Percent_Foreign_Born", "Percent_Speak_Spanish",
+          "Percent_Latino")]), type = "latex", median = TRUE, title = 
+          "Descriptive Statistics: Illinois Census Tracts without ICE Detention Facilities",
+          style = "aer", covariate.labels = c("Percent Foreign Born", 
+          "Percent Spanish Speaker", "Percent Hispanic/Latino"))
+
+```
+
